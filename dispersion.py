@@ -178,8 +178,9 @@ for i in range(1, len(radial_bins)): # Start at i = 1 since we're making shells
 
     v_avg = velocities[mask].mean(axis=0)
     difference = velocities[mask] - v_avg  
-    sig = np.sqrt(np.sum(np.square(difference), axis=1))
-    dispersion[i-1] = np.mean(sig)
+    coord_var = np.var(difference, axis=0)
+    dispersion[i-1] = np.sqrt(np.sum(coord_var))
+ 
 
 print radial_bins, dispersion
 # we need to delete a radial bin so the len matches
@@ -322,8 +323,10 @@ for i in range(1, len(radial_bins1)): # Start at i = 1 since we're making shells
 
     v_avg = velocities[mask].mean(axis=0)
     difference = velocities[mask] - v_avg
-    sig = np.sqrt(np.sum(np.square(difference), axis=1))
-    dispersion1[i-1] = np.mean(sig)
+   
+    coord_var = np.var(difference, axis=0)
+    dispersion1[i-1] = np.sqrt(np.sum(coord_var))
+ 
     
 print radial_bins1, dispersion1
 radial_bins1 = radial_bins1[:-1]
