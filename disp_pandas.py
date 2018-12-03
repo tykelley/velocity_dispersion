@@ -2,6 +2,7 @@ import h5py
 import matplotlib as mpl
 from matplotlib import pyplot as plt
 import numpy as np
+import pandas as pd
 
 mpl.use('Agg')
 
@@ -25,18 +26,16 @@ def analyze_halo(particle_file, halo_file, p_type=1):
 
 def dispersion_in_shells(velocities, radius, rmax=300, bin_size=1):
     radial_bins = np.arange(0, rmax, bin_size)
-    dispersion = np.zeros(radial_bins.size - 1)
+    
+    df = pd.DataFrame({"r" : radius,
+                       "vx" : velocities[:,0],
+                       "vy" : velocities[:,1], 
+                       "vz" : velocities[:,2],
+                       })
+    shells = pd.cut(df.radius, radial_bins)
+    groups = df.groupby(shells)
 
-    for i in range(1, len(radial_bins)): # i = 1 since we're making shells               
-        
-        mask = (radius >  radial_bins[i-1]) & (radius < radial_bins[i])
-
-        v_avg = velocities[mask].mean(axis=0)
-        difference = velocities[mask] - v_avg  
-        coord_var = np.var(difference, axis=0)
-        dispersion[i-1] = np.sqrt(np.sum(coord_var))
-
-    return radial_bins[:-1], dispersion
+    return np.sqrt(groups.var().sum(axis=1))
 
 def get_data(filename, num_of_file, key1, key2):
     if num_of_file == 1:
