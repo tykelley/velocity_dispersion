@@ -31,8 +31,8 @@ def dispersion_in_shells_pd(radius, velocities, rmax, bin_size):
                        "vy" : velocities[:,1], 
                        "vz" : velocities[:,2],
                        })
-    shells = pd.cut(df.radius, radial_bins)
-    groups = df.groupby(shells)
+    shells = pd.cut(df.r, radial_bins)
+    groups = df.drop("r", axis="columns").groupby(shells)
     dispersion = np.sqrt(groups.var().sum(axis=1))
     return radial_bins[1:], dispersion.values 
 
